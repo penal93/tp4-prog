@@ -86,6 +86,14 @@ int lista_insere_fim (struct lista *lista, int chave){
 }
 
 int lista_insere_ordenado (struct lista *lista, int chave){
+    if (lista_vazia(lista)){
+        struct nodo *novoElemento = malloc(sizeof(struct nodo));
+        
+        novoElemento->prox = NULL;
+        novoElemento->chave = chave;
+        lista->ini = novoElemento;
+    }
+
     struct nodo *atual = lista->ini;
     struct nodo *ant = NULL;
 
@@ -101,6 +109,7 @@ int lista_insere_ordenado (struct lista *lista, int chave){
 
     ant->prox = novoElemento;
     novoElemento->prox = atual;
+    lista->tamanho ++;
 
     return 1;
 }
@@ -117,6 +126,8 @@ int lista_remove_inicio (struct lista *lista, int *chave){
     free(removido);
     removido = NULL;
 
+    lista->tamanho --;
+
     return 1;
 }
 
@@ -132,6 +143,8 @@ int lista_remove_fim (struct lista *lista, int *chave){
     free(lista->ptr->prox);
     lista->ptr->prox = NULL;
 
+    lista->tamanho --;
+
     return 1;
 }
 
@@ -146,10 +159,16 @@ int lista_remove_ordenado (struct lista *lista, int chave){
         ant = atual;
         atual = atual->prox;
     }
-        
-    ant->prox = atual->prox;
+    
+    if (!ant)
+        lista->ini = atual->prox;
+    else
+        ant->prox = atual->prox;
+
     free(atual);
     atual = NULL;
+
+    lista->tamanho --;
 
     return 1;
 }
